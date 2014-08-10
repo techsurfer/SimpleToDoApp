@@ -17,28 +17,24 @@ import android.widget.ListView;
 
 public class EditItemActivity extends ActionBarActivity {
 	private ArrayList<String> todoItems;
-	private ListView lvItems;
 	private EditText edItemText; 
 	private Integer pos;
+	private String editText;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_item);
 		edItemText = (EditText) findViewById(R.id.edItemText);
 		readItems();
-		String editText = getIntent().getStringExtra(TodoActivity.TodoActivity_Item_DESC);
-		System.out.println("**** editText  : " + editText);
+		editText = getIntent().getStringExtra(TodoActivity.TodoActivity_Item_DESC);
 		pos = getIntent().getExtras().getInt(TodoActivity.TodoActivity_Item_POS);
-		System.out.println("**** pos  : " + pos);
+		System.out.println("**** editText  : " + editText+" pos  : " + pos);		
 		edItemText.setText(editText);
 	}
 	private void readItems(){
 		File todoFile = new File(getFilesDir() ,   "todo.txt");
 		try{			
 			todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
-			for(String str : todoItems){
-				System.out.println("**** Items in file  : " + str);
-			}
 		}catch(IOException ex ){
 			todoItems = new ArrayList();
 			ex.printStackTrace();
@@ -64,7 +60,7 @@ public class EditItemActivity extends ActionBarActivity {
 	}
 	public void saveItem(View v){
 		String itemText = 	edItemText.getText().toString();
-		System.out.println("**** saveItem New Item  : " + itemText);
+		System.out.println("**** saveItem New Item --> " + itemText+" old item -->"+editText);
 		todoItems.set(pos, itemText);
 		saveItems();
 		Intent i = new Intent(EditItemActivity.this, TodoActivity.class);

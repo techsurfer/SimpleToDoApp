@@ -38,7 +38,6 @@ public class TodoActivity extends ActionBarActivity {
         setContentView(R.layout.activity_todo);
 		etNewItem = (EditText) findViewById(R.id.etNewItem);
 		lvItems = (ListView) findViewById(R.id.lvItems);
-		//populateArrayItems();
 		readItems();
 		itemsAdapter = new ArrayAdapter<String>(this , android.R.layout.simple_list_item_1, todoItems);
 		lvItems.setAdapter(itemsAdapter);
@@ -53,6 +52,7 @@ public class TodoActivity extends ActionBarActivity {
 					int position, long id) {
 				todoItems.remove(position);
 				itemsAdapter.notifyDataSetChanged();
+				saveItems();
 				return true;
 			}
 			
@@ -62,8 +62,7 @@ public class TodoActivity extends ActionBarActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				//todoItems.remove(position);
-				//itemsAdapter.notifyDataSetChanged();
+				//readItems();
 				Intent i = new Intent(TodoActivity.this, EditItemActivity.class); 
 	              i.putExtra("TodoActivity_Item_POS", position);
 	              i.putExtra("TodoActivity_Item_DESC", todoItems.get(position));
@@ -74,16 +73,16 @@ public class TodoActivity extends ActionBarActivity {
 		});
 		
 	}
-	private void populateArrayItems(){
-		todoItems = new ArrayList<String>();
-		todoItems.add("Items 1");
-		todoItems.add("Items 2");
-		todoItems.add("Items 3");
-	}
+//	private void populateArrayItems(){
+//		todoItems = new ArrayList<String>();
+//		todoItems.add("Items 1");
+//		todoItems.add("Items 2");
+//		todoItems.add("Items 3");
+//	}
 
 	public void onAddedItem(View v){		
 		String itemText = 	etNewItem.getText().toString();
-		System.out.println("**** onAddedItem New Item  : " + itemText);
+		//System.out.println("**** onAddedItem New Item  : " + itemText);
 		itemsAdapter.add(itemText);
 		etNewItem.setText("");
 		saveItems();
@@ -92,9 +91,6 @@ public class TodoActivity extends ActionBarActivity {
 		File todoFile = new File(getFilesDir() ,   "todo.txt");
 		try{			
 			todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
-			for(String str : todoItems){
-				System.out.println("**** Items in file  : " + str);
-			}
 		}catch(IOException ex ){
 			todoItems = new ArrayList();
 			ex.printStackTrace();
@@ -104,7 +100,7 @@ public class TodoActivity extends ActionBarActivity {
 		File file = new File(getFilesDir(), "todo.txt");
 		try{
 			FileUtils.writeLines(file, todoItems);
-			readItems();
+			//readItems();
 		}catch(IOException ex ){
 			ex.printStackTrace();
 		}
