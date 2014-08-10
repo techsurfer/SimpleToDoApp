@@ -1,0 +1,115 @@
+package com.example.todoapp;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.commons.io.FileUtils;
+
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+
+public class TodoActivity extends ActionBarActivity {
+	private ArrayList<String> todoItems;
+	private ArrayAdapter<String> itemsAdapter;
+	private ListView lvItems;
+	private EditText etNewItem; 
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_todo);
+		etNewItem = (EditText) findViewById(R.id.etNewItem);
+		lvItems = (ListView) findViewById(R.id.lvItems);
+		//populateArrayItems();
+		//readItems();
+		itemsAdapter = new ArrayAdapter<String>(this , android.R.layout.simple_list_item_1, todoItems);
+		lvItems.setAdapter(itemsAdapter);
+		setupListViewListener();
+
+    }
+	private void setupListViewListener() {
+		lvItems.setOnItemLongClickListener( new OnItemLongClickListener(){
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				todoItems.remove(position);
+				itemsAdapter.notifyDataSetChanged();
+				return true;
+			}
+			
+		});
+		
+	}
+	private void populateArrayItems(){
+		todoItems = new ArrayList<String>();
+		todoItems.add("Items 1");
+		todoItems.add("Items 2");
+		todoItems.add("Items 3");
+	}
+
+	public void onAddedItem(View v){		
+		String itemText = 	etNewItem.getText().toString();
+		System.out.println("**** onAddedItem New Item  : " + itemText);
+		itemsAdapter.add(itemText);
+		etNewItem.setText("");
+		saveItems();
+	}
+	private void readItems(){
+		File file = new File(getFilesDir(), "todo.txt");
+		System.out.println("**** readItems file object  : " + file);
+		if(file != null ){
+			System.out.println("**** readItems file getPath  : " + file.getPath());
+			System.out.println("**** readItems file getPath  : " + file.getPath());
+		}
+		File todoFile = new File(file ,   "todo.txt");
+		try{
+			todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
+		}catch(IOException ex ){
+			todoItems = new ArrayList();
+			ex.printStackTrace();
+		}
+	}
+	private void saveItems(){
+		File file = new File(getFilesDir(), "todo.txt");
+		try{
+			FileUtils.writeLines(file, todoItems);
+		}catch(IOException ex ){
+			ex.printStackTrace();
+		}
+	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.todo, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

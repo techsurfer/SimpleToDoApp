@@ -1,0 +1,112 @@
+package com.example.todoapp;
+
+import java.util.ArrayList;
+
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+
+public class TodoActivity extends ActionBarActivity {
+	ArrayList<String> todoItems;
+	ArrayAdapter<String> itemsAdapter;
+	ListView lvItems;
+	private EditText etNewItem; 
+	private TextView tv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_todo);
+		etNewItem = (EditText) findViewById(R.id.etNewItem);
+		lvItems = (ListView) findViewById(R.id.lvItems);
+		//populateArrayItems();
+		readItems();
+		itemsAdapter = new ArrayAdapter<String>(this , android.R.layout.simple_list_item_1, todoItems);
+		lvItems.setAdapter(itemsAdapter);
+		setupListViewListener();
+
+    }
+	private void setupListViewListener() {
+		lvItems.setOnItemLongClickListener(new OnItemLongClickListener(){
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				todoItems.remove(position);
+				itemsAdapter.notifyDataSetChanged();
+				return true;
+			}
+			
+		});
+		
+	}
+	private void populateArrayItems(){
+		todoItems = new ArrayList<String>();
+		todoItems.add("Items 1");
+		todoItems.add("Items 2");
+		todoItems.add("Items 3");
+	}
+
+	public void onAddedItem(View v){		
+		String itemText = 	etNewItem.getText().toString();
+		itemsAdapter.add(itemText);
+		etNewItem.setText("");
+		saveItems();
+	}
+	private void readItems(){
+		System.out.println("Current working directory in Java : " + System.getProperty("user.dir"));
+		File filesDir = getFilesDir();
+		System.out.println("filesDir.getAbsolutePath() in Java : " + filesDir.getAbsolutePath());
+		System.out.println("filesDir.filesDir.getAbsolutePath()() in Java : " + filesDir.getAbsolutePath());
+		System.out.println("filesDir.filesDir.getAbsolutePath()() in Java : " + Environment.getExternalStorageDirectory().toString());
+		PackageManager m = getPackageManager();
+		String s = getPackageName();
+		try {
+		    PackageInfo p = m.getPackageInfo(s, 0);
+		    s = p.applicationInfo.dataDir;
+		} catch (NameNotFoundException e) {
+		    e.printStackTrace();
+		}
+		System.out.println(" s : " + s);
+		File todoFile = new File(s +"/"+  "todo.txt");
+		try{
+			todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
+		}catch(IOException ex ){
+			todoItems = new ArrayList();
+			ex.printStackTrace();
+		}
+	}
+	private void saveItems(){
+		File fileDir = new File(System.getProperty("user.dir"));
+		File todoFile = new File(fileDir , System.getProperty("user.dir")+"/todo.txt");
+		try{
+			FileUtils.writeLines(todoFile, todoItems);
+		}catch(IOException ex ){
+			ex.printStackTrace();
+		}
+	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.todo, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

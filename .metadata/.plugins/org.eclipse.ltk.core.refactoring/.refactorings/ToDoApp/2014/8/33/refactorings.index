@@ -1,0 +1,12 @@
+1407636585755	Extracts string 'null' into R.string.add_hint
+1407636625189	Extracts string 'null' into R.string.add_button_label
+1407636692648	Rename field 'listView1'
+1407636726575	Rename field 'editText1'
+1407636751733	Rename field 'etItem'
+1407636782481	Rename field 'button1'
+1407661140261	Extracts string 'null' into R.string.edItemHeader
+1407661219137	Extracts string 'null' into R.string.savebutton
+1407661262648	Extracts string 'null' into R.string.save_button_label
+1407664408815	Copy compilation units
+1407664488505	Copy file
+1407664569859	Delete elements
